@@ -30,24 +30,23 @@ Create a branch named Part2
 #include <iostream>
 namespace Example
 {
-    struct MyFoo
-    {
-        MyFoo() { std::cout << "creating MyFoo" << std::endl; }
-        ~MyFoo() { std::cout << "destroying MyFoo" << std::endl; }
-        void memberFunc() { std::cout << "MyFoo returnValue(): " << this->returnValue() << " and MyFoo memberVariable: " << this->memberVariable << std::endl; }  //3)
-        int returnValue() { return 3; }
-        float memberVariable = 3.14f;
-    };
-    int main()
-    {
-        MyFoo mf;
-        std::cout << "mf returnValue(): " << mf.returnValue() << " and mf memberVariable: " << mf.memberVariable << std::endl;  //3)
-        mf.memberFunc();
-        return 0;
-    }
+struct MyFoo
+{
+    MyFoo() { std::cout << "creating MyFoo" << std::endl; }
+    ~MyFoo() { std::cout << "destroying MyFoo" << std::endl; }
+    void memberFunc() { std::cout << "MyFoo returnValue(): " << this->returnValue() << " and MyFoo memberVariable: " << this->memberVariable << std::endl; } //3)
+    int returnValue() { return 3; }
+    float memberVariable = 3.14f;
+};
+int main()
+{
+    MyFoo mf;
+    std::cout << "mf returnValue(): " << mf.returnValue() << " and mf memberVariable: " << mf.memberVariable << std::endl; //3)
+    mf.memberFunc();
+    return 0;
 }
+} // namespace Example
 
-#include <iostream>
 #include <iomanip>
 #include <string>
 #include <vector>
@@ -66,6 +65,15 @@ struct Speaker
     ~Speaker()
     {
         std::cout << "Speaker dtor: " + name << std::endl;
+        std::cout << "The " + this->name + " speaker has turned itself ";
+        if (this->toggleOnOff())
+        {
+            std::cout << "ON!!!" << std::endl;
+        }
+        else
+        {
+            std::cout << "OFF!!!" << std::endl;
+        }
     }
 
     std::string name;
@@ -75,7 +83,7 @@ struct Speaker
 
     struct Eq
     {
-        Eq() : isOn(true), shape("Bell"), freq(200.0), gain(0.0) 
+        Eq() : isOn(true), shape("Bell"), freq(200.0), gain(0.0)
         {
             std::cout << "Eq ctor\n";
         }
@@ -108,12 +116,10 @@ bool Speaker::toggleOnOff()
     if (isOn)
     {
         isOn = false;
-        std::cout << "Speaker is turned OFF" << std::endl;
         return false;
     }
 
     isOn = true;
-    std::cout << "Speaker is turned ON" << std::endl;
     return true;
 }
 
@@ -176,6 +182,9 @@ struct Bass
     ~Bass()
     {
         std::cout << "Bass dtor: " << name << numberOfStrings << std::endl;
+        std::cout << "The open strings on the " + this->name + " bass play themselves...";
+        this->playOpenStrings(this->numberOfStrings);
+        std::cout << "!!!" << std::endl;
     }
 
     std::string name;
@@ -214,7 +223,14 @@ void Bass::playOpenStrings(int numStrings)
 
     for (int i = 0; i < numStrings; i++)
     {
-        std::cout << circleOfFourths[(index + i) % 12] << std::endl;
+        std::cout << circleOfFourths[(index + i) % 12];
+
+        if (i == numStrings - 1)
+        ;
+        else
+        {
+            std::cout << ", ";
+        }
     }
 }
 
@@ -358,10 +374,20 @@ struct SignalChain
     SignalChain() : fender5("Fender", 5), midas("Midas", 32), adam("ADAM")
     {
         std::cout << "SignalChain ctor\n";
-        fender5.playInstrument();
+        
+        std::cout << "The " + adam.name + " speaker has been turned ";
+        if (adam.toggleOnOff())
+        {
+            std::cout << "ON" << std::endl;
+        }
+        else
+        {
+            std::cout << "OFF" << std::endl;
+        }
     }
     ~SignalChain()
     {
+        std::cout << std::endl;
         std::cout << "SignalChain dtor\n";
     }
 
@@ -379,12 +405,13 @@ struct Studio
     Studio() : ks6{"Ken Smith", 6}, mackie{"Mackie", 8}, genelec{"Genelec"}
     {
         std::cout << "Studio ctor\n";
-        mackie.printStatus();
-        genelec.toggleOnOff();
-        ks6.playOpenStrings(6);
+        std::cout << "Someone plays open strings on the " + ks6.name + " bass...";
+        ks6.playOpenStrings(ks6.numberOfStrings);
+        std::cout << std::endl;
     }
     ~Studio()
     {
+        std::cout << std::endl;
         std::cout << "Studio dtor\n";
     }
 
@@ -393,11 +420,17 @@ struct Studio
     Speaker genelec;
 };
 
-
 int main()
 {
+    std::cout << std::endl;
     Example::main();
+    std::cout << std::endl;
+
     SignalChain chain1;
+    std::cout << std::endl;
+
     Studio studio1;
+    std::cout << std::endl;
+
     std::cout << "good to go!" << std::endl;
 }
