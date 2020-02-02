@@ -180,15 +180,8 @@ struct Bass
     bool activeStatus() { return isActive; }
     void reportActive()
     {
-        std::cout << "This " + this->name + " is an ";
-        if (this->activeStatus())
-        {
-            std::cout << "active bass\n";
-        }
-        else
-        {
-            std::cout << "pass bass\n";
-        }
+        std::cout << "This " + this->name + " is ";
+        std::cout << (this->activeStatus() ? "an active bass\n" : "a passive bass");
     }
 };
 
@@ -220,13 +213,10 @@ void Bass::playOpenStrings(int numStrings)
     {
         std::cout << circleOfFourths[(index + i) % 12];
 
-        if (i == numStrings - 1)
-        ;
-        else
-        {
-            std::cout << ", ";
-        }
+        if( i < numStrings -1 ) 
+            std::cout << ", "; 
     }
+    std::cout << std::endl;
 }
 
 /*
@@ -404,14 +394,14 @@ int main()
 
     Studio studio1;
     
-    std::cout << "The " + studio1.bass.name + " is an ";
+    std::cout << "The " + studio1.bass.name + " is ";
     if (studio1.bass.activeStatus())
     {
-        std::cout << "active bass\n";
+        std::cout << "an active bass\n";
     }
     else
     {
-        std::cout << "passive bass\n";
+        std::cout << "a passive bass\n";
     }
 
     studio1.bass.reportActive();
