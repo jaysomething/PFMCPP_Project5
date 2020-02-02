@@ -30,24 +30,23 @@ Create a branch named Part2
 #include <iostream>
 namespace Example
 {
-    struct MyFoo
-    {
-        MyFoo() { std::cout << "creating MyFoo" << std::endl; }
-        ~MyFoo() { std::cout << "destroying MyFoo" << std::endl; }
-        void memberFunc() { std::cout << "MyFoo returnValue(): " << this->returnValue() << " and MyFoo memberVariable: " << this->memberVariable << std::endl; }  //3)
-        int returnValue() { return 3; }
-        float memberVariable = 3.14f;
-    };
-    int main()
-    {
-        MyFoo mf;
-        std::cout << "mf returnValue(): " << mf.returnValue() << " and mf memberVariable: " << mf.memberVariable << std::endl;  //3)
-        mf.memberFunc();
-        return 0;
-    }
+struct MyFoo
+{
+    MyFoo() { std::cout << "creating MyFoo" << std::endl; }
+    ~MyFoo() { std::cout << "destroying MyFoo" << std::endl; }
+    void memberFunc() { std::cout << "MyFoo returnValue(): " << this->returnValue() << " and MyFoo memberVariable: " << this->memberVariable << std::endl; } //3)
+    int returnValue() { return 3; }
+    float memberVariable = 3.14f;
+};
+int main()
+{
+    MyFoo mf;
+    std::cout << "mf returnValue(): " << mf.returnValue() << " and mf memberVariable: " << mf.memberVariable << std::endl; //3)
+    mf.memberFunc();
+    return 0;
 }
+} // namespace Example
 
-#include <iostream>
 #include <iomanip>
 #include <string>
 #include <vector>
@@ -59,14 +58,8 @@ namespace Example
 
 struct Speaker
 {
-    Speaker(std::string speakerName) : name(speakerName)
-    {
-        std::cout << "Speaker ctor: " + name << std::endl;
-    }
-    ~Speaker()
-    {
-        std::cout << "Speaker dtor: " + name << std::endl;
-    }
+    Speaker(std::string speakerName) : name(speakerName) {}
+    ~Speaker() {}
 
     std::string name;
     bool isOn{false};
@@ -75,15 +68,10 @@ struct Speaker
 
     struct Eq
     {
-        Eq() : isOn(true), shape("Bell"), freq(200.0), gain(0.0) 
-        {
-            std::cout << "Eq ctor\n";
-        }
-
+        Eq() : isOn(true), shape("Bell"), freq(200.0), gain(0.0) {}
         ~Eq()
         {
             isOn = false;
-            std::cout << "Eq dtor\n";
         }
 
         bool isOn;
@@ -101,6 +89,11 @@ struct Speaker
 
     bool toggleOnOff();
     void turnOnEq(Eq eq1);
+    void selfToggleOnOFF()
+    {
+        std::cout << "This " + this->name + " speaker has turned itself ";
+        std::cout << (this->toggleOnOff() ? "ON!!!\n" : "OFF!!!\n");
+    }
 };
 
 bool Speaker::toggleOnOff()
@@ -108,12 +101,10 @@ bool Speaker::toggleOnOff()
     if (isOn)
     {
         isOn = false;
-        std::cout << "Speaker is turned OFF" << std::endl;
         return false;
     }
 
     isOn = true;
-    std::cout << "Speaker is turned ON" << std::endl;
     return true;
 }
 
@@ -125,14 +116,7 @@ void Speaker::turnOnEq(Eq eq1)
 
 void Speaker::Eq::printStatus()
 {
-    if (isOn)
-    {
-        std::cout << "EQ is ON" << std::endl;
-    }
-    else
-    {
-        std::cout << "EQ is OFF" << std::endl;
-    }
+    std::cout << (isOn ? "EQ is ON" : "EQ is OFF") << std::endl;
     std::cout << "Shape is " << shape << std::endl;
     std::cout << "Frequency is " << freq << " Hz" << std::endl;
     std::cout << "Gain is " << gain << " dB" << std::endl;
@@ -169,14 +153,7 @@ void Speaker::Eq::sweepFrequency(double freqStart, double freqEnd)
 
 struct Bass
 {
-    Bass(std::string bassName, int numString) : name(bassName), numberOfStrings(numString)
-    {
-        std::cout << "Bass ctor: " << name << numberOfStrings << std::endl;
-    }
-    ~Bass()
-    {
-        std::cout << "Bass dtor: " << name << numberOfStrings << std::endl;
-    }
+    Bass(std::string bassName, int numString) : name(bassName), numberOfStrings(numString) {}
 
     std::string name;
     int numberOfStrings;
@@ -186,6 +163,12 @@ struct Bass
 
     void playInstrument();
     void playOpenStrings(int numberOfStrings);
+    bool activeStatus() { return isActive; }
+    void reportActive()
+    {
+        std::cout << "This " + this->name + " is ";
+        std::cout << (this->activeStatus() ? "an active" : "a passive") << " bass" << std::endl;
+    }
 };
 
 void Bass::playInstrument()
@@ -193,14 +176,7 @@ void Bass::playInstrument()
     std::cout << "Playing bass" << std::endl;
     std::cout << name << " " << numberOfStrings << "-string" << std::endl;
     std::cout << scale << "' scale";
-    if (isActive)
-    {
-        std::cout << " active bass" << std::endl;
-    }
-    else
-    {
-        std::cout << " passive bass" << std::endl;
-    }
+    std::cout << (isActive ? " active bass" : " passive bass") << std::endl;
 }
 
 void Bass::playOpenStrings(int numStrings)
@@ -214,8 +190,12 @@ void Bass::playOpenStrings(int numStrings)
 
     for (int i = 0; i < numStrings; i++)
     {
-        std::cout << circleOfFourths[(index + i) % 12] << std::endl;
+        std::cout << circleOfFourths[(index + i) % 12];
+
+        if( i < numStrings -1 ) 
+            std::cout << ", "; 
     }
+    std::cout << std::endl;
 }
 
 /*
@@ -226,16 +206,11 @@ struct Mixer
 {
     Mixer(std::string mixerName, size_t numChan) : name(mixerName), numberOfChannels(numChan)
     {
-        std::cout << "Mixer ctor: " << name << numberOfChannels << std::endl;
         channels.reserve(numberOfChannels);
         for (size_t i = 0; i < numberOfChannels; i++)
         {
             channels[i].number = int(i) + 1;
         }
-    }
-    ~Mixer()
-    {
-        std::cout << "Mixer dtor: " << name << numberOfChannels << std::endl;
     }
 
     std::string name;
@@ -279,15 +254,7 @@ struct Mixer
 void Mixer::printStatus()
 {
     std::cout << name << " " << numberOfChannels << "-channel mixer is ";
-
-    if (isOn)
-    {
-        std::cout << "ON" << std::endl;
-    }
-    else
-    {
-        std::cout << "OFF" << std::endl;
-    }
+    std::cout << (isOn ? "ON" : "OFF") << std::endl;
 }
 
 void Mixer::muteChannels(size_t channelStart, size_t channelEnd)
@@ -312,14 +279,7 @@ void Mixer::showMuteStatus()
 {
     for (size_t i = 0; i < numberOfChannels; i++)
     {
-        if (channels[i].isMuted)
-        {
-            std::cout << "Channel " << channels[i].number << " is muted" << std::endl;
-        }
-        else
-        {
-            std::cout << "Channel " << channels[i].number << " is ON" << std::endl;
-        }
+        std::cout << "Channel " << channels[i].number << " is "<< (channels[i].isMuted ? "muted" : "ON") << std::endl;
     }
 }
 
@@ -355,19 +315,11 @@ void Mixer::Channel::adjustEq(Eq eq1)
 
 struct SignalChain
 {
-    SignalChain() : fender5("Fender", 5), midas("Midas", 32), adam("ADAM")
-    {
-        std::cout << "SignalChain ctor\n";
-        fender5.playInstrument();
-    }
-    ~SignalChain()
-    {
-        std::cout << "SignalChain dtor\n";
-    }
+    SignalChain() : bass("Fender", 5), mixer("Midas", 32), speaker("ADAM") {}
 
-    Bass fender5;
-    Mixer midas;
-    Speaker adam;
+    Bass bass;
+    Mixer mixer;
+    Speaker speaker;
 };
 
 /*
@@ -376,28 +328,34 @@ struct SignalChain
 
 struct Studio
 {
-    Studio() : ks6{"Ken Smith", 6}, mackie{"Mackie", 8}, genelec{"Genelec"}
-    {
-        std::cout << "Studio ctor\n";
-        mackie.printStatus();
-        genelec.toggleOnOff();
-        ks6.playOpenStrings(6);
-    }
-    ~Studio()
-    {
-        std::cout << "Studio dtor\n";
-    }
+    Studio() : bass("Ken Smith", 6), mixer("Mackie", 8), speaker("Genelec") {}
 
-    Bass ks6;
-    Mixer mackie;
-    Speaker genelec;
+    Bass bass;
+    Mixer mixer;
+    Speaker speaker;
 };
-
 
 int main()
 {
+    std::cout << std::endl;
     Example::main();
+    std::cout << std::endl;
+
     SignalChain chain1;
+
+    std::cout << "The " + chain1.speaker.name + " speaker has been turned ";
+    std::cout << (chain1.speaker.toggleOnOff() ? "ON\n" : "OFF\n");
+    
+    chain1.speaker.selfToggleOnOFF();
+    std::cout << std::endl;
+
     Studio studio1;
+    
+    std::cout << "The " + studio1.bass.name + " is ";
+    std::cout << (studio1.bass.activeStatus() ? "an active bass\n" : "a passive bass\n");
+    
+    studio1.bass.reportActive();
+    std::cout << std::endl;
+
     std::cout << "good to go!" << std::endl;
 }
