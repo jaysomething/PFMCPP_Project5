@@ -92,14 +92,7 @@ struct Speaker
     void selfToggleOnOFF()
     {
         std::cout << "This " + this->name + " speaker has turned itself ";
-        if (this->toggleOnOff())
-        {
-            std::cout << "ON!!!\n";
-        }
-        else
-        {
-            std::cout << "OFF!!!\n";
-        }
+        std::cout << (this->toggleOnOff() ? "ON!!!\n" : "OFF!!!\n");
     }
 };
 
@@ -123,14 +116,7 @@ void Speaker::turnOnEq(Eq eq1)
 
 void Speaker::Eq::printStatus()
 {
-    if (isOn)
-    {
-        std::cout << "EQ is ON" << std::endl;
-    }
-    else
-    {
-        std::cout << "EQ is OFF" << std::endl;
-    }
+    std::cout << (isOn ? "EQ is ON" : "EQ is OFF") << std::endl;
     std::cout << "Shape is " << shape << std::endl;
     std::cout << "Frequency is " << freq << " Hz" << std::endl;
     std::cout << "Gain is " << gain << " dB" << std::endl;
@@ -190,14 +176,7 @@ void Bass::playInstrument()
     std::cout << "Playing bass" << std::endl;
     std::cout << name << " " << numberOfStrings << "-string" << std::endl;
     std::cout << scale << "' scale";
-    if (isActive)
-    {
-        std::cout << " active bass" << std::endl;
-    }
-    else
-    {
-        std::cout << " passive bass" << std::endl;
-    }
+    std::cout << (isActive ? " active bass" : " passive bass");
 }
 
 void Bass::playOpenStrings(int numStrings)
@@ -275,15 +254,7 @@ struct Mixer
 void Mixer::printStatus()
 {
     std::cout << name << " " << numberOfChannels << "-channel mixer is ";
-
-    if (isOn)
-    {
-        std::cout << "ON" << std::endl;
-    }
-    else
-    {
-        std::cout << "OFF" << std::endl;
-    }
+    std::cout << (isOn ? "ON" : "OFF");
 }
 
 void Mixer::muteChannels(size_t channelStart, size_t channelEnd)
@@ -308,14 +279,7 @@ void Mixer::showMuteStatus()
 {
     for (size_t i = 0; i < numberOfChannels; i++)
     {
-        if (channels[i].isMuted)
-        {
-            std::cout << "Channel " << channels[i].number << " is muted" << std::endl;
-        }
-        else
-        {
-            std::cout << "Channel " << channels[i].number << " is ON" << std::endl;
-        }
+        std::cout << "Channel " << channels[i].number << " is "<< (channels[i].isMuted ? "muted" : "ON") << std::endl;
     }
 }
 
@@ -380,14 +344,7 @@ int main()
     SignalChain chain1;
 
     std::cout << "The " + chain1.speaker.name + " speaker has been turned ";
-    if (chain1.speaker.toggleOnOff())
-    {
-        std::cout << "ON\n";
-    }
-    else
-    {
-        std::cout << "OFF\n";
-    }
+    std::cout << (chain1.speaker.toggleOnOff() ? "ON\n" : "OFF\n");
     
     chain1.speaker.selfToggleOnOFF();
     std::cout << std::endl;
@@ -395,15 +352,8 @@ int main()
     Studio studio1;
     
     std::cout << "The " + studio1.bass.name + " is ";
-    if (studio1.bass.activeStatus())
-    {
-        std::cout << "an active bass\n";
-    }
-    else
-    {
-        std::cout << "a passive bass\n";
-    }
-
+    std::cout << (studio1.bass.activeStatus() ? "an active bass\n" : "a passive bass\n");
+    
     studio1.bass.reportActive();
     std::cout << std::endl;
 
