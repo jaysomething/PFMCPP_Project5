@@ -167,7 +167,7 @@ struct Bass
     void reportActive()
     {
         std::cout << "This " + this->name + " is ";
-        std::cout << (this->activeStatus() ? "an active bass\n" : "a passive bass");
+        std::cout << (this->activeStatus() ? "an active" : "a passive") << " bass" << std::endl;
     }
 };
 
@@ -176,7 +176,7 @@ void Bass::playInstrument()
     std::cout << "Playing bass" << std::endl;
     std::cout << name << " " << numberOfStrings << "-string" << std::endl;
     std::cout << scale << "' scale";
-    std::cout << (isActive ? " active bass" : " passive bass");
+    std::cout << (isActive ? " active bass" : " passive bass") << std::endl;
 }
 
 void Bass::playOpenStrings(int numStrings)
@@ -254,7 +254,7 @@ struct Mixer
 void Mixer::printStatus()
 {
     std::cout << name << " " << numberOfChannels << "-channel mixer is ";
-    std::cout << (isOn ? "ON" : "OFF");
+    std::cout << (isOn ? "ON" : "OFF") << std::endl;
 }
 
 void Mixer::muteChannels(size_t channelStart, size_t channelEnd)
