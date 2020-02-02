@@ -58,23 +58,8 @@ int main()
 
 struct Speaker
 {
-    Speaker(std::string speakerName) : name(speakerName)
-    {
-        std::cout << "Speaker ctor: " + name << std::endl;
-    }
-    ~Speaker()
-    {
-        std::cout << "Speaker dtor: " + name << std::endl;
-        std::cout << "The " + this->name + " speaker has turned itself ";
-        if (this->toggleOnOff())
-        {
-            std::cout << "ON!!!" << std::endl;
-        }
-        else
-        {
-            std::cout << "OFF!!!" << std::endl;
-        }
-    }
+    Speaker(std::string speakerName) : name(speakerName) {}
+    ~Speaker() {}
 
     std::string name;
     bool isOn{false};
@@ -83,15 +68,10 @@ struct Speaker
 
     struct Eq
     {
-        Eq() : isOn(true), shape("Bell"), freq(200.0), gain(0.0)
-        {
-            std::cout << "Eq ctor\n";
-        }
-
+        Eq() : isOn(true), shape("Bell"), freq(200.0), gain(0.0) {}
         ~Eq()
         {
             isOn = false;
-            std::cout << "Eq dtor\n";
         }
 
         bool isOn;
@@ -109,6 +89,18 @@ struct Speaker
 
     bool toggleOnOff();
     void turnOnEq(Eq eq1);
+    void selfToggleOnOFF()
+    {
+        std::cout << "This " + this->name + " speaker has turned itself ";
+        if (this->toggleOnOff())
+        {
+            std::cout << "ON!!!\n";
+        }
+        else
+        {
+            std::cout << "OFF!!!\n";
+        }
+    }
 };
 
 bool Speaker::toggleOnOff()
@@ -175,17 +167,7 @@ void Speaker::Eq::sweepFrequency(double freqStart, double freqEnd)
 
 struct Bass
 {
-    Bass(std::string bassName, int numString) : name(bassName), numberOfStrings(numString)
-    {
-        std::cout << "Bass ctor: " << name << numberOfStrings << std::endl;
-    }
-    ~Bass()
-    {
-        std::cout << "Bass dtor: " << name << numberOfStrings << std::endl;
-        std::cout << "The open strings on the " + this->name + " bass play themselves...";
-        this->playOpenStrings(this->numberOfStrings);
-        std::cout << "!!!" << std::endl;
-    }
+    Bass(std::string bassName, int numString) : name(bassName), numberOfStrings(numString) {}
 
     std::string name;
     int numberOfStrings;
@@ -195,6 +177,19 @@ struct Bass
 
     void playInstrument();
     void playOpenStrings(int numberOfStrings);
+    bool activeStatus() { return isActive; }
+    void reportActive()
+    {
+        std::cout << "This " + this->name + " is an ";
+        if (this->activeStatus())
+        {
+            std::cout << "active bass\n";
+        }
+        else
+        {
+            std::cout << "pass bass\n";
+        }
+    }
 };
 
 void Bass::playInstrument()
@@ -242,16 +237,11 @@ struct Mixer
 {
     Mixer(std::string mixerName, size_t numChan) : name(mixerName), numberOfChannels(numChan)
     {
-        std::cout << "Mixer ctor: " << name << numberOfChannels << std::endl;
         channels.reserve(numberOfChannels);
         for (size_t i = 0; i < numberOfChannels; i++)
         {
             channels[i].number = int(i) + 1;
         }
-    }
-    ~Mixer()
-    {
-        std::cout << "Mixer dtor: " << name << numberOfChannels << std::endl;
     }
 
     std::string name;
@@ -371,29 +361,11 @@ void Mixer::Channel::adjustEq(Eq eq1)
 
 struct SignalChain
 {
-    SignalChain() : fender5("Fender", 5), midas("Midas", 32), adam("ADAM")
-    {
-        std::cout << "SignalChain ctor\n";
-        
-        std::cout << "The " + adam.name + " speaker has been turned ";
-        if (adam.toggleOnOff())
-        {
-            std::cout << "ON" << std::endl;
-        }
-        else
-        {
-            std::cout << "OFF" << std::endl;
-        }
-    }
-    ~SignalChain()
-    {
-        std::cout << std::endl;
-        std::cout << "SignalChain dtor\n";
-    }
+    SignalChain() : bass("Fender", 5), mixer("Midas", 32), speaker("ADAM") {}
 
-    Bass fender5;
-    Mixer midas;
-    Speaker adam;
+    Bass bass;
+    Mixer mixer;
+    Speaker speaker;
 };
 
 /*
@@ -402,22 +374,11 @@ struct SignalChain
 
 struct Studio
 {
-    Studio() : ks6{"Ken Smith", 6}, mackie{"Mackie", 8}, genelec{"Genelec"}
-    {
-        std::cout << "Studio ctor\n";
-        std::cout << "Someone plays open strings on the " + ks6.name + " bass...";
-        ks6.playOpenStrings(ks6.numberOfStrings);
-        std::cout << std::endl;
-    }
-    ~Studio()
-    {
-        std::cout << std::endl;
-        std::cout << "Studio dtor\n";
-    }
+    Studio() : bass("Ken Smith", 6), mixer("Mackie", 8), speaker("Genelec") {}
 
-    Bass ks6;
-    Mixer mackie;
-    Speaker genelec;
+    Bass bass;
+    Mixer mixer;
+    Speaker speaker;
 };
 
 int main()
@@ -427,9 +388,33 @@ int main()
     std::cout << std::endl;
 
     SignalChain chain1;
+
+    std::cout << "The " + chain1.speaker.name + " speaker has been turned ";
+    if (chain1.speaker.toggleOnOff())
+    {
+        std::cout << "ON\n";
+    }
+    else
+    {
+        std::cout << "OFF\n";
+    }
+    
+    chain1.speaker.selfToggleOnOFF();
     std::cout << std::endl;
 
     Studio studio1;
+    
+    std::cout << "The " + studio1.bass.name + " is an ";
+    if (studio1.bass.activeStatus())
+    {
+        std::cout << "active bass\n";
+    }
+    else
+    {
+        std::cout << "passive bass\n";
+    }
+
+    studio1.bass.reportActive();
     std::cout << std::endl;
 
     std::cout << "good to go!" << std::endl;
