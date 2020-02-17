@@ -149,6 +149,7 @@ void Speaker::Eq::sweepFrequency(double freqStart, double freqEnd)
 
 struct Bass
 {
+    Bass() : name("Fender"), numberOfStrings(5) {}
     Bass(std::string bassName, int numString) : name(bassName), numberOfStrings(numString) {}
 
     std::string name;
@@ -337,9 +338,11 @@ void Mixer::Channel::adjustEq(Eq eq1)
 
 struct SignalChain
 {
-    SignalChain() : bass("Fender", 5), mixer("Midas", 32), speaker("ADAM") {}
+    SignalChain() : mixer("Midas", 32), speaker("ADAM") {}
 
-    Bass bass;
+    BassWrapper bassWrapper(new Bass());
+    Bass& bass = *bassWrapper.ptrBass;
+    
     Mixer mixer;
     Speaker speaker;
 
