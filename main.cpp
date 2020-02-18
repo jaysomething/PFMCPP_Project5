@@ -27,11 +27,13 @@ Create a branch named Part3
  see here for an example: https://repl.it/@matkatmusic/ch3p04example
  */
 
-#include <iostream>
+#include <array>
 #include <iomanip>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <array>
+
+#include "LeakedObjectDetector.h"
 
 /*
  copied UDT 1:
@@ -75,6 +77,15 @@ struct Speaker
         std::cout << "This " + this->name + " speaker has turned itself ";
         std::cout << (this->toggleOnOff() ? "ON!!!\n" : "OFF!!!\n");
     }
+
+    JUCE_LEAK_DETECTOR(Speaker)
+};
+
+struct SpeakerWrapper
+{
+    SpeakerWrapper(Speaker* ptr) : ptrSpeaker(ptr) {}
+    ~SpeakerWrapper() { delete ptrSpeaker; }
+    Speaker* ptrSpeaker = nullptr;
 };
 
 bool Speaker::toggleOnOff()
@@ -134,6 +145,7 @@ void Speaker::Eq::sweepFrequency(double freqStart, double freqEnd)
 
 struct Bass
 {
+    Bass() : name("Fender"), numberOfStrings(5) {}
     Bass(std::string bassName, int numString) : name(bassName), numberOfStrings(numString) {}
 
     std::string name;
@@ -150,6 +162,15 @@ struct Bass
         std::cout << "This " + this->name + " is ";
         std::cout << (this->activeStatus() ? "an active" : "a passive") << " bass" << std::endl;
     }
+
+    JUCE_LEAK_DETECTOR(Bass)
+};
+
+struct BassWrapper
+{
+    BassWrapper(Bass* ptr) : ptrBass(ptr) {}
+    ~BassWrapper() { delete ptrBass; }
+    Bass* ptrBass = nullptr;
 };
 
 void Bass::playInstrument()
@@ -173,8 +194,8 @@ void Bass::playOpenStrings(int numStrings)
     {
         std::cout << circleOfFourths[(index + i) % 12];
 
-        if( i < numStrings -1 ) 
-            std::cout << ", "; 
+        if (i < numStrings - 1)
+            std::cout << ", ";
     }
     std::cout << std::endl;
 }
@@ -230,6 +251,15 @@ struct Mixer
     void printStatus();
     void muteChannels(size_t channelStart, size_t channelEnd);
     void showMuteStatus();
+
+    JUCE_LEAK_DETECTOR(Mixer)
+};
+
+struct MixerWrapper
+{
+    MixerWrapper(Mixer* ptr) : ptrMixer(ptr) {}
+    ~MixerWrapper() { delete ptrMixer; }
+    Mixer* ptrMixer = nullptr;
 };
 
 void Mixer::printStatus()
@@ -260,7 +290,7 @@ void Mixer::showMuteStatus()
 {
     for (size_t i = 0; i < numberOfChannels; i++)
     {
-        std::cout << "Channel " << channels[i].number << " is "<< (channels[i].isMuted ? "muted" : "ON") << std::endl;
+        std::cout << "Channel " << channels[i].number << " is " << (channels[i].isMuted ? "muted" : "ON") << std::endl;
     }
 }
 
@@ -296,11 +326,23 @@ void Mixer::Channel::adjustEq(Eq eq1)
 
 struct SignalChain
 {
-    SignalChain() : bass("Fender", 5), mixer("Midas", 32), speaker("ADAM") {}
+    BassWrapper bassWrapper{new Bass("Fender", 5)};
+    Bass& bass = *bassWrapper.ptrBass;
 
-    Bass bass;
-    Mixer mixer;
-    Speaker speaker;
+    MixerWrapper mixerWrapper{new Mixer("Midas", 32)};
+    Mixer& mixer = *mixerWrapper.ptrMixer;
+
+    SpeakerWrapper speakerWrapper{new Speaker("ADAM")};
+    Speaker& speaker = *speakerWrapper.ptrSpeaker;
+
+    JUCE_LEAK_DETECTOR(SignalChain)
+};
+
+struct SignalChainWrapper
+{
+    SignalChainWrapper(SignalChain* ptr) : ptrSignalChain(ptr) {}
+    ~SignalChainWrapper() { delete ptrSignalChain; }
+    SignalChain* ptrSignalChain = nullptr;
 };
 
 /*
@@ -309,30 +351,44 @@ struct SignalChain
 
 struct Studio
 {
-    Studio() : bass("Ken Smith", 6), mixer("Mackie", 8), speaker("Genelec") {}
+    BassWrapper bassWrapper{new Bass("Ken Smith", 6)};
+    Bass& bass = *bassWrapper.ptrBass;
 
-    Bass bass;
-    Mixer mixer;
-    Speaker speaker;
+    MixerWrapper mixerWrapper{new Mixer("Mackie", 8)};
+    Mixer& mixer = *mixerWrapper.ptrMixer;
+
+    SpeakerWrapper speakerWrapper{new Speaker("Genelec")};
+    Speaker& speaker = *speakerWrapper.ptrSpeaker;
+
+    JUCE_LEAK_DETECTOR(Studio)
+};
+
+struct StudioWrapper
+{
+    StudioWrapper(Studio* ptr) : ptrStudio(ptr) {}
+    ~StudioWrapper() { delete ptrStudio; }
+    Studio* ptrStudio = nullptr;
 };
 
 int main()
 {
     std::cout << std::endl;
 
-    SignalChain chain1;
+    SignalChainWrapper signalChainWrapper{new SignalChain};
+    SignalChain& chain1 = *signalChainWrapper.ptrSignalChain;
 
     std::cout << "The " + chain1.speaker.name + " speaker has been turned ";
     std::cout << (chain1.speaker.toggleOnOff() ? "ON\n" : "OFF\n");
-    
+
     chain1.speaker.selfToggleOnOFF();
     std::cout << std::endl;
 
-    Studio studio1;
-    
+    StudioWrapper studioWrapper(new Studio);
+    Studio& studio1 = *studioWrapper.ptrStudio;
+
     std::cout << "The " + studio1.bass.name + " is ";
     std::cout << (studio1.bass.activeStatus() ? "an active bass\n" : "a passive bass\n");
-    
+
     studio1.bass.reportActive();
     std::cout << std::endl;
 
