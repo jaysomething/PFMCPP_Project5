@@ -27,11 +27,11 @@ Create a branch named Part3
  see here for an example: https://repl.it/@matkatmusic/ch3p04example
  */
 
-#include <iostream>
+#include <array>
 #include <iomanip>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <array>
 
 #include "LeakedObjectDetector.h"
 
@@ -83,9 +83,9 @@ struct Speaker
 
 struct SpeakerWrapper
 {
-    SpeakerWrapper(Speaker *ptr) : ptrSpeaker(ptr) {}
+    SpeakerWrapper(Speaker* ptr) : ptrSpeaker(ptr) {}
     ~SpeakerWrapper() { delete ptrSpeaker; }
-    Speaker *ptrSpeaker = nullptr;
+    Speaker* ptrSpeaker = nullptr;
 };
 
 bool Speaker::toggleOnOff()
@@ -168,9 +168,9 @@ struct Bass
 
 struct BassWrapper
 {
-    BassWrapper(Bass *ptr) : ptrBass(ptr) {}
+    BassWrapper(Bass* ptr) : ptrBass(ptr) {}
     ~BassWrapper() { delete ptrBass; }
-    Bass *ptrBass = nullptr;
+    Bass* ptrBass = nullptr;
 };
 
 void Bass::playInstrument()
@@ -257,9 +257,9 @@ struct Mixer
 
 struct MixerWrapper
 {
-    MixerWrapper(Mixer *ptr) : ptrMixer(ptr) {}
+    MixerWrapper(Mixer* ptr) : ptrMixer(ptr) {}
     ~MixerWrapper() { delete ptrMixer; }
-    Mixer *ptrMixer = nullptr;
+    Mixer* ptrMixer = nullptr;
 };
 
 void Mixer::printStatus()
@@ -327,22 +327,22 @@ void Mixer::Channel::adjustEq(Eq eq1)
 struct SignalChain
 {
     BassWrapper bassWrapper{new Bass("Fender", 5)};
-    Bass &bass = *bassWrapper.ptrBass;
+    Bass& bass = *bassWrapper.ptrBass;
 
     MixerWrapper mixerWrapper{new Mixer("Midas", 32)};
-    Mixer &mixer = *mixerWrapper.ptrMixer;
+    Mixer& mixer = *mixerWrapper.ptrMixer;
 
     SpeakerWrapper speakerWrapper{new Speaker("ADAM")};
-    Speaker &speaker = *speakerWrapper.ptrSpeaker;
+    Speaker& speaker = *speakerWrapper.ptrSpeaker;
 
     JUCE_LEAK_DETECTOR(SignalChain)
 };
 
 struct SignalChainWrapper
 {
-    SignalChainWrapper(SignalChain *ptr) : ptrSignalChain(ptr) {}
+    SignalChainWrapper(SignalChain* ptr) : ptrSignalChain(ptr) {}
     ~SignalChainWrapper() { delete ptrSignalChain; }
-    SignalChain *ptrSignalChain = nullptr;
+    SignalChain* ptrSignalChain = nullptr;
 };
 
 /*
@@ -352,22 +352,22 @@ struct SignalChainWrapper
 struct Studio
 {
     BassWrapper bassWrapper{new Bass("Ken Smith", 6)};
-    Bass &bass = *bassWrapper.ptrBass;
+    Bass& bass = *bassWrapper.ptrBass;
 
     MixerWrapper mixerWrapper{new Mixer("Mackie", 8)};
-    Mixer &mixer = *mixerWrapper.ptrMixer;
+    Mixer& mixer = *mixerWrapper.ptrMixer;
 
     SpeakerWrapper speakerWrapper{new Speaker("Genelec")};
-    Speaker &speaker = *speakerWrapper.ptrSpeaker;
+    Speaker& speaker = *speakerWrapper.ptrSpeaker;
 
     JUCE_LEAK_DETECTOR(Studio)
 };
 
 struct StudioWrapper
 {
-    StudioWrapper(Studio *ptr) : ptrStudio(ptr) {}
+    StudioWrapper(Studio* ptr) : ptrStudio(ptr) {}
     ~StudioWrapper() { delete ptrStudio; }
-    Studio *ptrStudio = nullptr;
+    Studio* ptrStudio = nullptr;
 };
 
 int main()
@@ -375,7 +375,7 @@ int main()
     std::cout << std::endl;
 
     SignalChainWrapper signalChainWrapper{new SignalChain};
-    SignalChain &chain1 = *signalChainWrapper.ptrSignalChain;
+    SignalChain& chain1 = *signalChainWrapper.ptrSignalChain;
 
     std::cout << "The " + chain1.speaker.name + " speaker has been turned ";
     std::cout << (chain1.speaker.toggleOnOff() ? "ON\n" : "OFF\n");
@@ -383,8 +383,8 @@ int main()
     chain1.speaker.selfToggleOnOFF();
     std::cout << std::endl;
 
-    StudioWrapper studioWrapper{new Studio};
-    Studio &studio1 = *studioWrapper.ptrStudio;
+    StudioWrapper studioWrapper(new Studio);
+    Studio& studio1 = *studioWrapper.ptrStudio;
 
     std::cout << "The " + studio1.bass.name + " is ";
     std::cout << (studio1.bass.activeStatus() ? "an active bass\n" : "a passive bass\n");
